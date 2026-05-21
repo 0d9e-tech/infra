@@ -1,0 +1,26 @@
+combustion script je generovaný z https://opensuse.github.io/fuel-ignition/edit
+s několika manuálníma změnama.
+
+	$ sha256sum ./openSUSE-MicroOS.aarch64-ContainerHost-RaspberryPi.raw.xz
+	3a56c5d654a4436e832ceabe052dcc0d714509afb3866f71177d8a2a2785cd25  ./openSUSE-MicroOS.aarch64-ContainerHost-RaspberryPi.raw.xz
+
+	$ xzcat openSUSE-MicroOS.aarch64-ContainerHost-RaspberryPi.raw.xz | sudo dd of=/dev/sda bs=4M status=progress
+
+	# sync
+
+combustion script typicky existuje na separátním usb ale rpi5 zatím (2026)
+nedokáže namountovat usb dost brzo při bootu. Workaround je dát script do boot
+partitionu a přejmenovat jeho label na 'combustion'. to nerozbije boot protože
+tam se hledá podle UUID, ne labelu.
+
+	# fatlabel /dev/sda1 COMBUSTION
+	# mount /dev/sda1 /mnt/
+	# mkdir -p /mnt/combustion/
+	# cp experiler.combustion.sh /mnt/combustion/script
+
+Pro kontrolu obsah:
+
+	$ sha256sum /mnt/combustion/script 
+	3da82e8bfc8556c53efec197016f99ec85556f7d6c041eecc138ab360cc2654b  ./combustion/script
+
+rpi trvá pár minut než nabootuje (10 sekund v bootu + 30 sekund timeout na ingnition + 10 sekund v bootu po rebootu + etc)
