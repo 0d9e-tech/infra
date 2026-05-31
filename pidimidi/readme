@@ -1,0 +1,8 @@
+Toto je kopie experileru
+
+sha256sum ./openSUSE-MicroOS.aarch64-ContainerHost-RaspberryPi.raw.xz
+3a56c5d654a4436e832ceabe052dcc0d714509afb3866f71177d8a2a2785cd25  ./openSUSE-MicroOS.aarch64-ContainerHost-RaspberryPi.raw.xz
+
+sha256sum /mnt/combustion/script
+2063997e86fe5feb65a24ca18afbc96c708681127d9d8849ec584e949fc470ae  /mnt/combustion/script
+
