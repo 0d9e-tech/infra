@@ -1,0 +1,12 @@
+[Unit]
+Description=Data Btrfs filesystem
+
+[Mount]
+Type=btrfs
+What=UUID={{ disk_uuid }} 
+Options=defaults,noatime,compress=zstd,discard=async,space_cache=v2
+Where=/mnt
+
+[Install]
+WantedBy=multi-user.target
+

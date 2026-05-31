@@ -1,0 +1,18 @@
+[Unit]
+Description=Caddy Web Server
+After=network-online.target
+
+[Container]
+Image=localhost/custom-caddy:latest
+Network=caddy.network
+PublishPort=80:80
+PublishPort=443:443
+# Persistent volumes for TLS certificates and state
+Volume=/srv/caddy-data/data:/data:z
+Volume=/srv/caddy-data/config:/config:z
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

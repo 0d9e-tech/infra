@@ -1,0 +1,4 @@
+# FROM docker.io/library/caddy:latest
+FROM registry.ipv6.docker.com/library/caddy:latest
+
+COPY Caddyfile /etc/caddy/Caddyfile

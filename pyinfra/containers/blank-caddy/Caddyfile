@@ -1,0 +1,7 @@
+{
+	email prokop@rdck.dev
+}
+
+:80 {
+	respond "Works!" 200
+}
