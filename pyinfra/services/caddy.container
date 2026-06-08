@@ -4,7 +4,7 @@ After=network-online.target
 
 [Container]
 Image=localhost/custom-caddy:latest
-Network=caddy.network
+Network=public.network
 PublishPort=80:80
 PublishPort=443:443
 # Persistent volumes for TLS certificates and state
