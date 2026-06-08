@@ -3,11 +3,12 @@ Description=Caddy Web Server
 After=network-online.target
 
 [Container]
-Image=localhost/custom-caddy:latest
+Image=docker.io/library/caddy:latest
 Network=public.network
 PublishPort=80:80
 PublishPort=443:443
-# Persistent volumes for TLS certificates and state
+
+Volume=/srv/caddy-data/Caddyfile:/etc/caddy/Caddyfile:z
 Volume=/srv/caddy-data/data:/data:z
 Volume=/srv/caddy-data/config:/config:z
 

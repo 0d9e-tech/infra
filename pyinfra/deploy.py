@@ -36,7 +36,7 @@ for target in ["all", "default"]:
         line=f"net.ipv4.conf.{target}.rp_filter=0",
         present=True,
     )
-    files.line( # also fixes containers not being reachable
+    files.line(  # also fixes containers not being reachable
         name=f"Enable IPv6 Forwarding ({target} conf)",
         path="/etc/sysctl.d/99-podman-ipv6.conf",
         line=f"net.ipv6.conf.{target}.forwarding=1",
@@ -44,23 +44,12 @@ for target in ["all", "default"]:
     )
 
 
-files.sync(
-    name="Sync Caddy build context",
-    src=str(DEPLOY_DIR / "containers/blank-caddy"),
-    dest="/opt/caddy-build",
-)
-
-server.shell(
-    name="Build Caddy image",
-    commands=["podman build -t localhost/custom-caddy:latest /opt/caddy-build"],
-)
-
 for directory in ["/srv/caddy-data/data", "/srv/caddy-data/config"]:
     files.directory(path=directory, present=True)
 
-files.put(
-    src=str(DEPLOY_DIR / "containers/blank-caddy/Caddyfile"),
-    dest="/srv/caddy-data/config/Caddyfile",
+caddy_config = files.put(
+    src=str(DEPLOY_DIR / "configs/Caddyfile"),
+    dest="/srv/caddy-data/Caddyfile",
 )
 
 reload_ops.append(
@@ -76,6 +65,7 @@ reload_ops.append(
         dest="/etc/containers/systemd/caddy.container",
     )
 )
+
 
 if disk_uuid:
     reload_ops.append(
@@ -100,6 +90,14 @@ systemd.daemon_reload(
     _if=any_changed(*reload_ops),
 )
 
+systemd.service(
+    name="Enable caddy",
+    service="caddy.service",
+    running=True,
+    restarted=caddy_config.changed,
+    # can't enable because it is generated from .container
+)
+
 if disk_uuid:
     systemd.service(
         name="Enable and mount /mnt",
@@ -109,7 +107,7 @@ if disk_uuid:
     )
 
 if is_experiler:
-    minecraft_config = files.put( # note: must be after the mnt mount
+    minecraft_config = files.put(  # note: must be after the mnt mount
         src=str(DEPLOY_DIR / "configs/server.properties"),
         dest="/mnt/@minecraft-server/server.properties",
     )
@@ -117,6 +115,6 @@ if is_experiler:
         name="Enable minecraft server",
         service="minecraft-server.service",
         running=True,
-        restarted=minecraft_config.changed
+        restarted=minecraft_config.changed,
         # can't enable because it is generated from .container
     )
